@@ -1,7 +1,6 @@
 ﻿namespace CalorieTrackerService.Application.UseCase
 {
-    public class Class1
+    public class ProductApplication
     {
-
     }
 }
