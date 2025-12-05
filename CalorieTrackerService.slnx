@@ -21,6 +21,7 @@
     <Project Path="CalorieTrackerService.Transversal.CleanSolution/CalorieTrackerService.Transversal.CleanSolution.csproj" Id="62670bee-4fd7-48ed-be4d-e330ef220c07" />
     <Project Path="CalorieTrackerService.Transversal.Common/CalorieTrackerService.Transversal.Common.csproj" Id="ebdfcbac-d156-4370-9e2e-d25ed99a603d" />
     <Project Path="CalorieTrackerService.Transversal.JsonInterchange/CalorieTrackerService.Transversal.JsonInterchange.csproj" Id="604b3690-efff-4f79-81ff-5c4b75d01100" />
+    <Project Path="CalorieTrackerService.Transversal.MercadonaProductsGenerator/CalorieTrackerService.Transversal.MercadonaProductsGenerator.csproj" Id="ce0a51de-f5b7-4199-8498-e0ff82940a3a" />
     <Project Path="CalorieTrackerService.Transversal.Security/CalorieTrackerService.Transversal.Security.csproj" Id="64b01264-61a7-4c35-9d7e-ddfe92f51740" />
   </Folder>
 </Solution>
