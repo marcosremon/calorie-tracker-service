@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/Application/">
+    <Project Path="CalorieTrackerService.Application.DataTransferObject/CalorieTrackerService.Application.DataTransferObject.csproj" Id="df7a5778-3179-492e-86f7-04721e9b8d60" />
+    <Project Path="CalorieTrackerService.Application.Interface/CalorieTrackerService.Application.Interface.csproj" Id="bde33f04-8b53-4b9b-a10f-cad57013ed36" />
+    <Project Path="CalorieTrackerService.Application.Mapper/CalorieTrackerService.Application.Mapper.csproj" Id="6662426b-15c2-49d1-9216-f06b6053cf84" />
+    <Project Path="CalorieTrackerService.Application.UseCase/CalorieTrackerService.Application.UseCase.csproj" Id="db1ee7dd-a48c-4a6f-bc23-e1107d1dcc3b" />
+  </Folder>
+  <Folder Name="/Documentation/">
+    <File Path="calorie-tracker.sql" />
+  </Folder>
+  <Folder Name="/Domain/">
+    <Project Path="CalorieTrackerService.Domain.Model/CalorieTrackerService.Domain.Model.csproj" Id="e8f47bcf-d257-4fd5-8627-1b78ffab32ee" />
+  </Folder>
+  <Folder Name="/Infraestructure/">
+    <Project Path="CalorieTrackerService.Infraestructure.Persistence/CalorieTrackerService.Infraestructure.Persistence.csproj" Id="f879d596-12a5-4c6e-bae5-50072628bc76" />
+  </Folder>
+  <Folder Name="/Service/">
+    <Project Path="CalorieTrackerService.Service.WebApi/CalorieTrackerService.Service.WebApi.csproj" />
+  </Folder>
+  <Folder Name="/Transversal/">
+    <Project Path="CalorieTrackerService.Transversal.CleanSolution/CalorieTrackerService.Transversal.CleanSolution.csproj" Id="62670bee-4fd7-48ed-be4d-e330ef220c07" />
+    <Project Path="CalorieTrackerService.Transversal.Common/CalorieTrackerService.Transversal.Common.csproj" Id="ebdfcbac-d156-4370-9e2e-d25ed99a603d" />
+    <Project Path="CalorieTrackerService.Transversal.JsonInterchange/CalorieTrackerService.Transversal.JsonInterchange.csproj" Id="604b3690-efff-4f79-81ff-5c4b75d01100" />
+    <Project Path="CalorieTrackerService.Transversal.Security/CalorieTrackerService.Transversal.Security.csproj" Id="64b01264-61a7-4c35-9d7e-ddfe92f51740" />
+  </Folder>
+</Solution>
