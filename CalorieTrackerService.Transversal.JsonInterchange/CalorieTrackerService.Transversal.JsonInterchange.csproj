@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\CalorieTrackerService.Transversal.Common\CalorieTrackerService.Transversal.Common.csproj" />
+  </ItemGroup>
+
 </Project>

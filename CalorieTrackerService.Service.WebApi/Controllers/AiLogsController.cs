@@ -1,4 +1,5 @@
 ﻿using CalorieTrackerService.Application.Interface.Application;
+using CalorieTrackerService.Transversal.JsonInterchange.AiLogs.AnalyzeImage;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CalorieTrackerService.Service.WebApi.Controllers
@@ -15,7 +16,21 @@ namespace CalorieTrackerService.Service.WebApi.Controllers
         }
 
         #region AnalyzeImage
+        [HttpPost("analyze-image")]
+        public async Task<ActionResult<AnalyzeImageResponseJson>> AnalyzeImage([FromBody] AnalyzeImageRequestJson analyzeImageRequestJson)
+        {
+            AnalyzeImageResponseJson analyzeImageResponseJson = new AnalyzeImageResponseJson();
+            try
+            {
 
+            } 
+            catch (Exception ex)
+            {
+
+            }
+
+            return Ok(analyzeImageResponseJson);
+        }
         #endregion
     }
 }

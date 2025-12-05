@@ -1,4 +1,5 @@
 ﻿using CalorieTrackerService.Application.Interface.Application;
+using CalorieTrackerService.Transversal.JsonInterchange.Auth.Login;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CalorieTrackerService.Service.WebApi.Controllers
@@ -15,7 +16,21 @@ namespace CalorieTrackerService.Service.WebApi.Controllers
         }
 
         #region Login
+        [HttpPost("login")]
+        public async Task<ActionResult<LoginResponseJson>> Login([FromBody] LoginRequestJson loginRequestJson)
+        {
+            LoginResponseJson loginResponseJson = new LoginResponseJson();
+            try
+            {
 
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return Ok(loginResponseJson);
+        }
         #endregion
     }
 }

@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CalorieTrackerService.Application.DataTransferObject\CalorieTrackerService.Application.DataTransferObject.csproj" />
     <ProjectReference Include="..\CalorieTrackerService.Application.Interface\CalorieTrackerService.Application.Interface.csproj" />
+    <ProjectReference Include="..\CalorieTrackerService.Transversal.JsonInterchange\CalorieTrackerService.Transversal.JsonInterchange.csproj" />
   </ItemGroup>
 
 </Project>

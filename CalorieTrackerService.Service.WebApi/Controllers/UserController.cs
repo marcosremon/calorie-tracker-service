@@ -1,4 +1,5 @@
 using CalorieTrackerService.Application.Interface.Application;
+using CalorieTrackerService.Transversal.JsonInterchange.User.CreateUser;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CalorieTrackerService.Service.WebApi.Controllers
@@ -15,7 +16,21 @@ namespace CalorieTrackerService.Service.WebApi.Controllers
         }
 
         #region CreateUser
+        [HttpPost("create-user")]
+        public async Task<ActionResult<CreateUserResponseJson>> CreateUser([FromBody] CreateUserRequestJson createUserRequestJson)
+        {
+            CreateUserResponseJson createUserResponseJson = new CreateUserResponseJson();
+            try
+            {
+                
+            } 
+            catch (Exception ex)
+            {
+                
+            }
 
+            return Ok(createUserResponseJson);
+        }
         #endregion
     }
 }
