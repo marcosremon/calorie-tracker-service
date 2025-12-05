@@ -1,6 +1,6 @@
 ﻿namespace CalorieTrackerService.Application.Interface.Repository
 {
-    public class IAiLogsRepository
+    public interface IAiLogsRepository
     {
     }
 }

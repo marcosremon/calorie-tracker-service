@@ -1,3 +1,4 @@
+using CalorieTrackerService.Application.Interface.Application;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CalorieTrackerService.Service.WebApi.Controllers
@@ -6,6 +7,11 @@ namespace CalorieTrackerService.Service.WebApi.Controllers
     [Route("user")]
     public class UserController : ControllerBase
     {
-       
+        private readonly IUserApplication _userApplication;
+
+        public UserController(IUserApplication userApplication)
+        {
+            _userApplication = userApplication;
+        }
     }
 }

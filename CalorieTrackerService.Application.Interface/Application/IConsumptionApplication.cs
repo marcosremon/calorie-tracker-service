@@ -1,6 +1,6 @@
 ﻿namespace CalorieTrackerService.Application.Interface.Application
 {
-    public class IConsumptionApplication
+    public interface IConsumptionApplication
     {
     }
 }
