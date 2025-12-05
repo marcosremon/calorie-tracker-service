@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CalorieTrackerService.Application.Interface\CalorieTrackerService.Application.Interface.csproj" />
     <ProjectReference Include="..\CalorieTrackerService.Domain.Model\CalorieTrackerService.Domain.Model.csproj" />
   </ItemGroup>
 
