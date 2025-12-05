@@ -13,5 +13,29 @@ namespace CalorieTrackerService.Service.WebApi.Controllers
         {
             _productApplication = productApplication;
         }
+
+        #region CreateProduct
+
+        #endregion
+
+        #region GetProducts
+
+        #endregion
+
+        #region GetProductsById
+
+        #endregion
+
+        #region GetProductsByName
+
+        #endregion
+
+        #region UpdateProduct
+
+        #endregion
+
+        #region DeleteProduct
+
+        #endregion
     }
 }

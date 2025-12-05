@@ -13,5 +13,25 @@ namespace CalorieTrackerService.Service.WebApi.Controllers
         {
             _consumptionApplication = consumptionApplication;
         }
+
+        #region CreateConsumption
+
+        #endregion
+
+        #region GetTodayConsumption
+
+        #endregion
+
+        #region GetDayConsumption
+
+        #endregion
+
+        #region GetWeekConsumption
+
+        #endregion
+
+        #region DeleteConsumption
+
+        #endregion
     }
 }

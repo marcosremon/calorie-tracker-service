@@ -13,5 +13,9 @@ namespace CalorieTrackerService.Service.WebApi.Controllers
         {
             _authApplication = authApplication;
         }
+
+        #region Login
+
+        #endregion
     }
 }

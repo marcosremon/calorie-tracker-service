@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CalorieTrackerService.Service.WebApi.Controllers
 {
     [ApiController]
-    [Route("ai-logs")]
+    [Route("ia")]
     public class AiLogsController : ControllerBase
     {
         private readonly IAiLogsApplication _aiLogsApplication;
@@ -13,5 +13,9 @@ namespace CalorieTrackerService.Service.WebApi.Controllers
         {
             _aiLogsApplication = aiLogsApplication;
         }
+
+        #region AnalyzeImage
+
+        #endregion
     }
 }
