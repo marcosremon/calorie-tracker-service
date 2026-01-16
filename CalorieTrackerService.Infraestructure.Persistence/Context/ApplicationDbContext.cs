@@ -9,6 +9,7 @@ namespace RoutinesGymService.Infraestructure.Persistence.Context
 
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Product { get; set; }
+        public DbSet<MercadonaProduct> MercadonaProducts { get; set; }
         public DbSet<Consumption> Consumption { get; set; }
         public DbSet<AiLogs> AiLogs { get; set; }
 
