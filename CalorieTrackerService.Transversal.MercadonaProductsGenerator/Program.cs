@@ -1,18 +1,11 @@
-﻿using RoutinesGymService.Infraestructure.Persistence.Context;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using Npgsql;
 using Microsoft.Extensions.Configuration;
 
 public class Program
 {
-    private readonly ApplicationDbContext _context;
-
-    public Program(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     #region Main
     public static async Task Main(string[] args)
     {
@@ -48,8 +41,7 @@ public class Program
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
                 if (keyInfo.Key.ToString().ToLower() == "s")
                 {
-                    _context.MercadonaProducts.AddRange(products);
-                    await _context.SaveChangesAsync();
+                    await InsertMercadonaProductsAsync(products);
                 }
             }
         }
@@ -149,5 +141,216 @@ public class Program
 
         return null;
     }
+    #endregion
+
+    #region InsertMercadonaProducts
+    static async Task InsertMercadonaProductsAsync(List<MercadonaProduct> products)
+    {
+        string? appsettingsPath = FindAppsettingsJson();
+
+        if (appsettingsPath == null)
+        {
+            Console.WriteLine("ERROR: No se encontró appsettings.json");
+            return;
+        }
+
+        IConfigurationRoot config = new ConfigurationBuilder()
+            .SetBasePath(Path.GetDirectoryName(appsettingsPath)!)
+            .AddJsonFile(Path.GetFileName(appsettingsPath), optional: false, reloadOnChange: true)
+            .Build();
+
+        string? connectionString = config.GetConnectionString("PostgreSQLConnection");
+
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            Console.WriteLine("ERROR: No se encontró la cadena de conexión 'PostgreSQLConnection'");
+            return;
+        }
+
+        await using NpgsqlConnection conn = new NpgsqlConnection(connectionString);
+        await conn.OpenAsync();
+
+        const string sql = """
+        INSERT INTO mercadona_products (
+            id, 
+            name, 
+            brand, 
+            description, 
+            price, 
+            unit_price,
+            category_id, 
+            category_name, 
+            image_url,
+            published, 
+            available_online, 
+            share_url,
+            scraped_at, 
+            main_category_id, 
+            main_category_name,
+            subcategory_id, 
+            subcategory_name
+        )
+        VALUES (
+            @id, 
+            @name, 
+            @brand, 
+            @description, 
+            @price, 
+            @unit_price,
+            @category_id, 
+            @category_name, 
+            @image_url,
+            @published, 
+            @available_online, 
+            @share_url,
+            @scraped_at, 
+            @main_category_id, 
+            @main_category_name,
+            @subcategory_id, 
+            @subcategory_name
+        )
+        ON CONFLICT (id) DO NOTHING;
+        """;
+
+        Console.WriteLine("Insertando productos en la base de datos...");
+
+        await using NpgsqlTransaction tx = await conn.BeginTransactionAsync();
+
+        try
+        {
+            int insertedCount = 0;
+
+            List<MercadonaProduct> databaseProducts = new List<MercadonaProduct>();
+            List<MercadonaProduct> newOrChangedProducts = new List<MercadonaProduct>();
+
+            #region Cargar productos existentes
+
+            const string selectSql = "SELECT id, name, brand, description, price, unit_price, category_id, category_name, image_url, published, available_online, share_url, scraped_at, main_category_id, main_category_name, subcategory_id, subcategory_name FROM mercadona_products;";
+
+            await using (NpgsqlCommand selectCmd = new NpgsqlCommand(selectSql, conn, tx))
+            await using (NpgsqlDataReader reader = await selectCmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    databaseProducts.Add(new MercadonaProduct
+                    {
+                        Id = reader.GetString(0),
+                        Name = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
+                        Brand = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
+                        Description = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
+                        Price = reader.IsDBNull(4) ? string.Empty : reader.GetString(4),
+                        UnitPrice = reader.IsDBNull(5) ? null : reader.GetDouble(5),
+                        CategoryId = reader.IsDBNull(6) ? string.Empty : reader.GetString(6),
+                        CategoryName = reader.IsDBNull(7) ? string.Empty : reader.GetString(7),
+                        ImageUrl = reader.IsDBNull(8) ? string.Empty : reader.GetString(8),
+                        Published = reader.GetBoolean(9),
+                        AvailableOnline = reader.GetBoolean(10),
+                        ShareUrl = reader.IsDBNull(11) ? string.Empty : reader.GetString(11),
+                        ScrapedAt = reader.IsDBNull(12) ? string.Empty : reader.GetString(12),
+                        MainCategoryId = reader.GetInt32(13),
+                        MainCategoryName = reader.IsDBNull(14) ? string.Empty : reader.GetString(14),
+                        SubcategoryId = reader.GetInt32(15),
+                        SubcategoryName = reader.IsDBNull(16) ? string.Empty : reader.GetString(16)
+                    });
+                }
+            }
+
+            #endregion
+
+            #region Insertar nuevos productos
+
+            int skippedCount = 0;
+            Console.WriteLine($"Cargados {databaseProducts.Count} productos desde la base de datos.");
+
+            foreach (MercadonaProduct p in products)
+            {
+                bool exists = databaseProducts.Any(dbP =>
+                    dbP.Id == p.Id &&
+                    dbP.Name == p.Name &&
+                    dbP.Brand == p.Brand &&
+                    dbP.Price == p.Price &&
+                    dbP.UnitPrice == p.UnitPrice &&
+                    dbP.Description == p.Description &&
+                    dbP.CategoryName == p.CategoryName &&
+                    dbP.ImageUrl == p.ImageUrl &&
+                    dbP.Published == p.Published &&
+                    dbP.AvailableOnline == p.AvailableOnline &&
+                    dbP.MainCategoryName == p.MainCategoryName &&
+                    dbP.SubcategoryName == p.SubcategoryName);
+
+                if (exists)
+                {
+                    Console.WriteLine($"[OMITIDO] El producto ID: {p.Id} ({p.Name}) ya existe sin cambios.");
+                    skippedCount++;
+                    continue; 
+                }
+
+                await using var cmd = new NpgsqlCommand(sql, conn, tx);
+
+                cmd.Parameters.AddWithValue("@id", p.Id);
+                cmd.Parameters.AddWithValue("@name", p.Name);
+                cmd.Parameters.AddWithValue("@brand", string.IsNullOrEmpty(p.Brand) ? DBNull.Value : p.Brand);
+                cmd.Parameters.AddWithValue("@description", string.IsNullOrEmpty(p.Description) ? DBNull.Value : p.Description);
+                cmd.Parameters.AddWithValue("@price", string.IsNullOrEmpty(p.Price) ? DBNull.Value : p.Price);
+                cmd.Parameters.AddWithValue("@unit_price", p.UnitPrice ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@category_id", string.IsNullOrEmpty(p.CategoryId) ? DBNull.Value : p.CategoryId);
+                cmd.Parameters.AddWithValue("@category_name", string.IsNullOrEmpty(p.CategoryName) ? DBNull.Value : p.CategoryName);
+                cmd.Parameters.AddWithValue("@image_url", string.IsNullOrEmpty(p.ImageUrl) ? DBNull.Value : p.ImageUrl);
+                cmd.Parameters.AddWithValue("@published", p.Published);
+                cmd.Parameters.AddWithValue("@available_online", p.AvailableOnline);
+                cmd.Parameters.AddWithValue("@share_url", string.IsNullOrEmpty(p.ShareUrl) ? DBNull.Value : p.ShareUrl);
+                cmd.Parameters.AddWithValue("@scraped_at", string.IsNullOrEmpty(p.ScrapedAt) ? DBNull.Value : p.ScrapedAt);
+                cmd.Parameters.AddWithValue("@main_category_id", p.MainCategoryId);
+                cmd.Parameters.AddWithValue("@main_category_name", string.IsNullOrEmpty(p.MainCategoryName) ? DBNull.Value : p.MainCategoryName);
+                cmd.Parameters.AddWithValue("@subcategory_id", p.SubcategoryId);
+                cmd.Parameters.AddWithValue("@subcategory_name", string.IsNullOrEmpty(p.SubcategoryName) ? DBNull.Value : p.SubcategoryName);
+
+                await cmd.ExecuteNonQueryAsync();
+                insertedCount++;
+
+                if (insertedCount % 100 == 0)
+                {
+                    Console.WriteLine($"Procesados {insertedCount} nuevos/cambiados...");
+                }
+            }
+
+            Console.WriteLine($"--- RESUMEN ---");
+            Console.WriteLine($"Insertados/Actualizados: {insertedCount}");
+            Console.WriteLine($"Omitidos por duplicado exacto: {skippedCount}");
+
+
+            await tx.CommitAsync();
+            Console.WriteLine($"✔ Insertados {products.Count} productos correctamente (duplicados omitidos).");
+            
+            #endregion
+        }
+        catch (Exception ex)
+        {
+            await tx.RollbackAsync();
+            Console.WriteLine($"✖ Error al insertar productos: {ex.Message}");
+            throw;
+        }
+    }
+
+    private static string? FindAppsettingsJson()
+    {
+        string fileName = "appsettings.json";
+        DirectoryInfo? currentDir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
+
+        while (currentDir != null)
+        {
+            FileInfo[] files = currentDir.GetFiles(fileName, SearchOption.AllDirectories);
+
+            FileInfo? targetFile = files.FirstOrDefault(f => f.FullName.Contains("CalorieTrackerService.Service.WebApi"));
+
+            if (targetFile != null)
+                return targetFile.FullName;
+
+            currentDir = currentDir.Parent;
+        }
+
+        return null;
+    }
+
     #endregion
 }
